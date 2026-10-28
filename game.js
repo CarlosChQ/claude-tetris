@@ -39,6 +39,10 @@ const overlay = document.getElementById('overlay');
 const overlayTitle = document.getElementById('overlay-title');
 const overlayScore = document.getElementById('overlay-score');
 const restartBtn = document.getElementById('restart-btn');
+const themeBtn = document.getElementById('theme-toggle');
+
+// colores del tema leídos de las variables CSS (se actualizan en applyTheme)
+const theme = { grid: '#22222e', highlight: 'rgba(255,255,255,0.12)', stroke: 'transparent' };
 
 let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
 
@@ -163,13 +167,16 @@ function drawBlock(context, x, y, colorIndex, size, alpha) {
   context.fillStyle = color;
   context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
   // highlight
-  context.fillStyle = 'rgba(255,255,255,0.12)';
+  context.strokeStyle = theme.stroke;
+  context.lineWidth = 1;
+  context.strokeRect(x * size + 1.5, y * size + 1.5, size - 3, size - 3);
+  context.fillStyle = theme.highlight;
   context.fillRect(x * size + 1, y * size + 1, size - 2, 4);
   context.globalAlpha = 1;
 }
 
 function drawGrid() {
-  ctx.strokeStyle = '#22222e';
+  ctx.strokeStyle = theme.grid;
   ctx.lineWidth = 0.5;
   for (let c = 1; c < COLS; c++) {
     ctx.beginPath();
@@ -300,5 +307,25 @@ document.addEventListener('keydown', e => {
 });
 
 restartBtn.addEventListener('click', init);
+
+function applyTheme(name) {
+  document.documentElement.dataset.theme = name;
+  const css = getComputedStyle(document.documentElement);
+  theme.grid = css.getPropertyValue('--grid').trim();
+  theme.highlight = css.getPropertyValue('--highlight').trim();
+  theme.stroke = css.getPropertyValue('--block-stroke').trim();
+  const light = name === 'light';
+  themeBtn.textContent = light ? 'Modo oscuro' : 'Modo claro';
+  themeBtn.setAttribute('aria-pressed', String(light));
+  // en pausa o game over el bucle está detenido: redibujar a mano
+  if (current && next) { draw(); drawNext(); }
+}
+
+themeBtn.addEventListener('click', () => {
+  applyTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
+  themeBtn.blur(); // evita que Espacio reactive el botón
+});
+
+applyTheme('dark');
 
 init();
