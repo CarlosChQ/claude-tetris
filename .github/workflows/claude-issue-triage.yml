@@ -79,6 +79,12 @@ jobs:
                ## Cómo verificar
                ## Información faltante  (solo si aplica; en ese caso añade también needs-info)
                El diagnóstico debe servir al equipo como guía para implementar la solución después.
+               El contenido se publicará tal cual como comentario en GitHub, así que debe usar
+               Markdown compatible con GitHub (GitHub Flavored Markdown): encabezados `##`, listas
+               con `-`, código en línea con backticks, bloques de código con ``` y lenguaje
+               (p. ej. ```js), tablas GFM si ayudan y enlaces `[texto](url)`. No envuelvas todo el
+               archivo en un bloque de código ni uses HTML salvo `<details>`/`<summary>` para
+               contenido largo.
 
             No modifiques ningún otro archivo del repositorio, no hagas commits, no abras PRs
             y no publiques comentarios: otro paso del workflow publicará triage.md.
