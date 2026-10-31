@@ -42,6 +42,7 @@ Es una versión jugable del Tetris clásico con todas las mecánicas que esperar
 - **Vista previa** de la siguiente pieza.
 - **Sistema de puntuación** clásico de Tetris (100 / 300 / 500 / 800 multiplicado por nivel).
 - **Niveles** que aumentan cada 10 líneas y aceleran la caída.
+- **Power-up de Gravedad**: algunas piezas (10 %) traen un bloque marcado con ★. Al limpiar la línea que lo contiene ganas una carga (contador `GRAVITY` del panel). Pulsa `G` para gastarla: cada columna cae hasta el fondo rellenando los huecos y las líneas que se completen puntúan como siempre.
 - **Pausa** y **Game Over** con opción de reinicio.
 - **Modo oscuro / claro**: arranca en oscuro y el botón «Modo claro» del panel cambia el tema (variables CSS en `style.css`).
 
@@ -86,6 +87,7 @@ Después abre `http://localhost:8000` en el navegador.
 | `↑` o `X` | Rotar la pieza en sentido horario |
 | `↓`       | Soft drop (bajar más rápido)      |
 | `Espacio` | Hard drop (caída instantánea)     |
+| `G`       | Usar power-up de Gravedad         |
 | `P`       | Pausar / reanudar                 |
 
 ---
@@ -110,7 +112,8 @@ Aporta el aspecto visual con estética _dark / retro arcade_: fondo oscuro, tipo
 
 Contiene toda la lógica del juego. A grandes rasgos:
 
-- **Modelo del tablero**: una matriz `ROWS × COLS` donde cada celda guarda `0` (vacía) o un índice de color (1–9) que identifica la pieza.
+- **Modelo del tablero**: una matriz `ROWS × COLS` donde cada celda guarda `0` (vacía) o un índice de color (1–9) que identifica la pieza. Un bloque con power-up se guarda como `tipo + POWER` (11–19) y su color se obtiene con `v % POWER`.
+- **Gravedad** (`applyGravity`): compacta cada columna hacia el fondo y después llama a `clearLines()`.
 - **Piezas**: definidas como matrices cuadradas. Para rotar se calcula la transposición + reverso de filas (`rotateCW`).
 - **Detección de colisiones** (`collide`): comprueba que ninguna celda de la pieza salga del tablero ni se solape con bloques ya fijados.
 - **Wall kicks** (`tryRotate`): si la rotación choca, intenta desplazar la pieza ±1 y ±2 columnas antes de descartar el giro.

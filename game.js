@@ -32,6 +32,10 @@ const PIECES = [
 
 const LINE_SCORES = [0, 100, 300, 500, 800];
 
+// bloque con power-up de Gravedad: celda = tipo + POWER (11–19); el color sale de v % POWER
+const POWER = 10;
+const POWER_CHANCE = 0.1;
+
 const canvas = document.getElementById('board');
 const ctx = canvas.getContext('2d');
 const nextCanvas = document.getElementById('next-canvas');
@@ -39,6 +43,7 @@ const nextCtx = nextCanvas.getContext('2d');
 const scoreEl = document.getElementById('score');
 const linesEl = document.getElementById('lines');
 const levelEl = document.getElementById('level');
+const gravityEl = document.getElementById('gravity');
 const overlay = document.getElementById('overlay');
 const overlayTitle = document.getElementById('overlay-title');
 const overlayScore = document.getElementById('overlay-score');
@@ -48,7 +53,7 @@ const themeBtn = document.getElementById('theme-toggle');
 // colores del tema leídos de las variables CSS (se actualizan en applyTheme)
 const theme = { grid: '#22222e', highlight: 'rgba(255,255,255,0.12)', stroke: 'transparent' };
 
-let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
+let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId, gravityCharges;
 
 function createBoard() {
   return Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
@@ -57,6 +62,12 @@ function createBoard() {
 function randomPiece() {
   const type = Math.floor(Math.random() * (PIECES.length - 1)) + 1;
   const shape = PIECES[type].map(row => [...row]);
+  if (Math.random() < POWER_CHANCE) {
+    const cells = [];
+    shape.forEach((row, r) => row.forEach((v, c) => { if (v) cells.push([r, c]); }));
+    const [r, c] = cells[Math.floor(Math.random() * cells.length)];
+    shape[r][c] += POWER;
+  }
   return { type, shape, x: Math.floor(COLS / 2) - Math.floor(shape[0].length / 2), y: 0 };
 }
 
@@ -105,6 +116,7 @@ function clearLines() {
   let cleared = 0;
   for (let r = ROWS - 1; r >= 0; r--) {
     if (board[r].every(v => v !== 0)) {
+      if (board[r].some(v => v > POWER)) gravityCharges++;
       board.splice(r, 1);
       board.unshift(new Array(COLS).fill(0));
       cleared++;
@@ -118,6 +130,18 @@ function clearLines() {
     dropInterval = Math.max(100, 1000 - (level - 1) * 90);
     updateHUD();
   }
+}
+
+// cada columna cae hasta el fondo rellenando los huecos; luego se limpian las líneas completas
+function applyGravity() {
+  for (let c = 0; c < COLS; c++) {
+    const filled = [];
+    for (let r = ROWS - 1; r >= 0; r--)
+      if (board[r][c]) filled.push(board[r][c]);
+    for (let r = ROWS - 1, i = 0; r >= 0; r--, i++)
+      board[r][c] = filled[i] ?? 0;
+  }
+  clearLines();
 }
 
 function ghostY() {
@@ -162,11 +186,12 @@ function updateHUD() {
   scoreEl.textContent = score.toLocaleString();
   linesEl.textContent = lines;
   levelEl.textContent = level;
+  gravityEl.textContent = gravityCharges;
 }
 
 function drawBlock(context, x, y, colorIndex, size, alpha) {
   if (!colorIndex) return;
-  const color = COLORS[colorIndex];
+  const color = COLORS[colorIndex % POWER];
   context.globalAlpha = alpha ?? 1;
   context.fillStyle = color;
   context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
@@ -176,6 +201,13 @@ function drawBlock(context, x, y, colorIndex, size, alpha) {
   context.strokeRect(x * size + 1.5, y * size + 1.5, size - 3, size - 3);
   context.fillStyle = theme.highlight;
   context.fillRect(x * size + 1, y * size + 1, size - 2, 4);
+  if (colorIndex > POWER) {
+    context.fillStyle = '#fff';
+    context.font = `bold ${Math.round(size * 0.6)}px sans-serif`;
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText('★', x * size + size / 2, y * size + size / 2 + 1);
+  }
   context.globalAlpha = 1;
 }
 
@@ -273,6 +305,7 @@ function init() {
   score = 0;
   lines = 0;
   level = 1;
+  gravityCharges = 0;
   paused = false;
   gameOver = false;
   dropInterval = 1000;
@@ -306,6 +339,12 @@ document.addEventListener('keydown', e => {
     case 'Space':
       e.preventDefault();
       hardDrop();
+      break;
+    case 'KeyG':
+      if (gravityCharges > 0) {
+        gravityCharges--;
+        applyGravity();
+      }
       break;
   }
   updateHUD();
