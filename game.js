@@ -14,6 +14,7 @@ const COLORS = [
   '#64b5f6', // J - light blue
   '#ffb74d', // L - orange
   '#ff4081', // C - hot pink
+  '#a1887f', // N - tuerca (marrón metálico)
 ];
 
 const PIECES = [
@@ -26,6 +27,7 @@ const PIECES = [
   [[6,0,0],[6,6,6],[0,0,0]],                  // J
   [[0,0,7],[7,7,7],[0,0,0]],                  // L
   [[8,8,8,8],[8,0,0,8],[0,0,0,0],[0,0,0,0]], // C
+  [[9,9,9],[9,0,9],[9,9,9]],                  // N - tuerca
 ];
 
 const LINE_SCORES = [0, 100, 300, 500, 800];

@@ -13,7 +13,7 @@ Open `index.html` directly (`start index.html` on Windows) or serve the folder w
 ## Architecture (`game.js`)
 
 - **Global mutable state**: `board`, `current`, `next`, `score`, `lines`, `level`, `paused`, `gameOver`, `lastTime`, `dropAccum`, `dropInterval`, `animId` are module-level `let`s. `init()` resets all of them and is also the restart handler.
-- **Board model**: `ROWS × COLS` matrix; each cell is `0` (empty) or a piece type index `1–7`. The same index selects the color in `COLORS` and is the value stored inside each `PIECES` shape matrix, so `COLORS`, `PIECES` and the type range in `randomPiece()` must stay aligned.
+- **Board model**: `ROWS × COLS` matrix; each cell is `0` (empty) or a piece type index `1–9`. The same index selects the color in `COLORS` and is the value stored inside each `PIECES` shape matrix, so `COLORS`, `PIECES` and the type range in `randomPiece()` must stay aligned.
 - **Pieces**: square matrices; `rotateCW` transposes and reverses. `tryRotate` applies simple wall kicks with x offsets `[0, -1, 1, -2, 2]` (not SRS).
 - **Collision**: `collide(shape, ox, oy)` is the single source of truth for movement, rotation, ghost projection (`ghostY`), and game-over detection in `spawn()`. Cells with `y < 0` are allowed.
 - **Game loop**: `loop(ts)` via `requestAnimationFrame`, accumulates `dt` into `dropAccum` and drops one row when it exceeds `dropInterval`. Pause/game over work by `cancelAnimationFrame(animId)`.
