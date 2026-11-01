@@ -42,6 +42,7 @@
             <li><kbd>↓</kbd> bajar</li>
             <li><kbd>Space</kbd> caída</li>
             <li><kbd>P</kbd> pausa</li>
+            <li><kbd>Enter</kbd> jugar (inicio)</li>
           </ul>
         </div>
 
@@ -53,7 +54,41 @@
       <div class="overlay-box">
         <p id="overlay-title">GAME OVER</p>
         <p id="overlay-score"></p>
+        <div id="gameover-records" class="records-view hidden">
+          <form id="record-form" class="hidden">
+            <label for="record-name">¡Nuevo récord! Tu nombre:</label>
+            <input id="record-name" type="text" maxlength="12" placeholder="Anónimo" autocomplete="off" />
+            <button type="submit" class="btn-primary">Guardar</button>
+          </form>
+          <table class="records-table">
+            <thead>
+              <tr><th>#</th><th>Nombre</th><th>Puntos</th><th>Líneas</th><th>Combo</th><th>Fecha</th></tr>
+            </thead>
+            <tbody class="records-body"></tbody>
+          </table>
+          <p class="records-stats">Mejor combo: <span class="best-combo">0</span> · Líneas máximas: <span class="max-lines">0</span></p>
+          <button type="button" class="reset-records-btn">Resetear récords</button>
+        </div>
         <button id="restart-btn">Reiniciar</button>
+      </div>
+    </div>
+
+    <div id="start-screen" class="overlay">
+      <div class="overlay-box">
+        <p class="start-title">TETRIS</p>
+        <div class="records-view">
+          <p class="records-heading">RÉCORDS</p>
+          <table class="records-table">
+            <thead>
+              <tr><th>#</th><th>Nombre</th><th>Puntos</th><th>Líneas</th><th>Combo</th><th>Fecha</th></tr>
+            </thead>
+            <tbody class="records-body"></tbody>
+          </table>
+          <p class="records-stats">Mejor combo: <span class="best-combo">0</span> · Líneas máximas: <span class="max-lines">0</span></p>
+          <button type="button" class="reset-records-btn">Resetear récords</button>
+        </div>
+        <button type="button" id="play-btn" class="btn-primary">Jugar</button>
+        <p class="start-hint">o pulsa <kbd>Enter</kbd></p>
       </div>
     </div>
   </div>
