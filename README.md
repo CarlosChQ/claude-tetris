@@ -44,6 +44,13 @@ Es una versión jugable del Tetris clásico con todas las mecánicas que esperar
 - **Niveles** que aumentan cada 10 líneas y aceleran la caída.
 - **Pausa** y **Game Over** con opción de reinicio.
 - **Modo oscuro / claro**: arranca en oscuro y el botón «Modo claro» del panel cambia el tema (variables CSS en `style.css`).
+- **Skins** de las piezas, elegibles en el selector «SKIN» del panel y aplicadas al instante (también en pausa o tras Game Over):
+  - **Retro**: bloques planos con brillo superior (aspecto clásico).
+  - **Neón**: tablero negro y colores saturados con resplandor (`shadowBlur`).
+  - **Pastel**: paleta suave y bordes redondeados.
+  - **Pixel art**: textura de damero y bisel pixelado.
+
+  La skin elegida se guarda en `localStorage` (clave `tetris-skin`). Neón fuerza siempre el fondo negro; el resto usa el fondo del tema claro/oscuro.
 
 ---
 
@@ -176,6 +183,7 @@ Algunos parámetros fáciles de tunear en `game.js`:
 | `ROWS`         | Filas del tablero                        | `20`                  |
 | `BLOCK`        | Tamaño en píxeles de cada celda          | `30`                  |
 | `COLORS`       | Paleta de colores por tipo de pieza      | 8 colores             |
+| `SKINS`        | Skins (`colors`, `boardBg`, `grid`, `drawBlock`) | `retro`, `neon`, `pastel`, `pixel` |
 | `LINE_SCORES`  | Puntos por 1, 2, 3 o 4 líneas eliminadas | `[0,100,300,500,800]` |
 | `dropInterval` | Velocidad inicial de caída en ms         | `1000`                |
 
